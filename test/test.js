@@ -139,12 +139,15 @@ async function integration() {
   assert.ok(r.data.players.every((p) => p.lot != null), 'pick 모드 reset 시 제비 유지');
   ok('reset: lobby 복귀, mapping 초기화, pick 제비 유지');
 
-  // 최소 인원 미달 start
+  // 혼자서도 시작 가능(솔로) — 0명만 거부, 1명은 허용
   let r2 = await http(base, 'POST', '/api/rooms', { lotCount: 4, results: ['a','b','c','d'] });
+  r = await http(base, 'POST', `/api/rooms/${r2.data.roomId}/start`, { hostToken: r2.data.hostToken });
+  assert.strictEqual(r.status, 400, '0명 start 거부');
   await http(base, 'POST', `/api/rooms/${r2.data.roomId}/join`, { name: 'solo', lot: 0 });
   r = await http(base, 'POST', `/api/rooms/${r2.data.roomId}/start`, { hostToken: r2.data.hostToken });
-  assert.strictEqual(r.status, 400, '2명 미만 start 거부');
-  ok('start: 2명 미만 거부(400)');
+  assert.strictEqual(r.status, 200, '솔로(1명) start 허용');
+  assert.strictEqual(r.data.status, 'revealing');
+  ok('start: 0명 거부(400), 솔로(1명) 허용(200)');
 
   // random 모드: 시작 시 제비 일괄 배정 + reset 시 제비 비움
   let rr = await http(base, 'POST', '/api/rooms', { lotCount: 5, results: ['a','b','c','d','e'], drawMode: 'random' });
