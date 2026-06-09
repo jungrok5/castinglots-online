@@ -3,7 +3,7 @@ services:
     name: castinglots-online
     runtime: node
     plan: free
-    branch: claude/castinglots-handoff-docs-a1yisd
+    branch: main
     buildCommand: npm install
     startCommand: node server.js
     autoDeploy: true
