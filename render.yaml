@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: castinglots-online
+    runtime: node
+    plan: free
+    branch: claude/castinglots-handoff-docs-a1yisd
+    buildCommand: npm install
+    startCommand: node server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
